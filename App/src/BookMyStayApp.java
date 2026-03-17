@@ -1,83 +1,53 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.LinkedList;
+import java.util.Queue;
 
-abstract class Room {
-    protected String name;
-    protected int beds;
-    protected double price;
+class Reservation {
+    private String guestName;
+    private String roomType;
 
-    public Room(String name, int beds, double price) {
-        this.name = name;
-        this.beds = beds;
-        this.price = price;
+    public Reservation(String guestName, String roomType) {
+        this.guestName = guestName;
+        this.roomType = roomType;
     }
 
-    public abstract void displayDetails();
+    public String getGuestName() { return guestName; }
+    public String getRoomType() { return roomType; }
 }
 
-class SingleRoom extends Room {
-    public SingleRoom() { super("Single Room", 1, 50.0); }
-    public void displayDetails() { System.out.println(name + " | Beds: " + beds + " | Price: $" + price); }
-}
+class BookingRequestQueue {
+    private Queue<Reservation> queue;
 
-class DoubleRoom extends Room {
-    public DoubleRoom() { super("Double Room", 2, 90.0); }
-    public void displayDetails() { System.out.println(name + " | Beds: " + beds + " | Price: $" + price); }
-}
+    public BookingRequestQueue() { queue = new LinkedList<>(); }
 
-class SuiteRoom extends Room {
-    public SuiteRoom() { super("Suite Room", 3, 150.0); }
-    public void displayDetails() { System.out.println(name + " | Beds: " + beds + " | Price: $" + price); }
-}
+    public void addRequest(Reservation reservation) { queue.offer(reservation); }
 
-class RoomInventory {
-    private Map<String, Integer> availability;
-
-    public RoomInventory() { availability = new HashMap<>(); }
-
-    public void addRoomType(String roomType, int count) { availability.put(roomType, count); }
-
-    public int getAvailability(String roomType) { return availability.getOrDefault(roomType, 0); }
-}
-
-class RoomSearchService {
-    private RoomInventory inventory;
-
-    public RoomSearchService(RoomInventory inventory) { this.inventory = inventory; }
-
-    public void searchAvailableRooms(Room[] rooms) {
-        System.out.println("\nAvailable Rooms:");
-        for (Room room : rooms) {
-            int available = inventory.getAvailability(room.name);
-            if (available > 0) {
-                room.displayDetails();
-                System.out.println("Available: " + available + "\n");
-            }
+    public void displayRequests() {
+        System.out.println("\nPending Booking Requests (FIFO Order):");
+        for (Reservation r : queue) {
+            System.out.println("Guest: " + r.getGuestName() + " | Room Type: " + r.getRoomType());
         }
     }
+
+    public boolean isEmpty() { return queue.isEmpty(); }
 }
 
 public class BookMyStayApp {
     public static void main(String[] args) {
 
-        RoomInventory inventory = new RoomInventory();
+        BookingRequestQueue requestQueue = new BookingRequestQueue();
 
-        Room single = new SingleRoom();
-        Room doubleR = new DoubleRoom();
-        Room suite = new SuiteRoom();
-        Room[] allRooms = {single, doubleR, suite};
-
-        inventory.addRoomType(single.name, 5);
-        inventory.addRoomType(doubleR.name, 0);
-        inventory.addRoomType(suite.name, 2);
+        requestQueue.addRequest(new Reservation("Alice", "Single Room"));
+        requestQueue.addRequest(new Reservation("Bob", "Double Room"));
+        requestQueue.addRequest(new Reservation("Charlie", "Suite Room"));
+        requestQueue.addRequest(new Reservation("Diana", "Single Room"));
 
         System.out.println("======================================");
-        System.out.println("   Welcome to Book My Stay App v4.0");
+        System.out.println("   Welcome to Book My Stay App v5.0");
         System.out.println("======================================");
 
-        RoomSearchService searchService = new RoomSearchService(inventory);
-        searchService.searchAvailableRooms(allRooms);
+        requestQueue.displayRequests();
 
+        System.out.println("\nBooking requests are stored in arrival order and ready for allocation.");
         System.out.println("Thank you for using Book My Stay!");
     }
 }
