@@ -33,25 +33,26 @@ class SuiteRoom extends Room {
 class RoomInventory {
     private Map<String, Integer> availability;
 
-    public RoomInventory() {
-        availability = new HashMap<>();
-    }
+    public RoomInventory() { availability = new HashMap<>(); }
 
-    public void addRoomType(String roomType, int count) {
-        availability.put(roomType, count);
-    }
+    public void addRoomType(String roomType, int count) { availability.put(roomType, count); }
 
-    public int getAvailability(String roomType) {
-        return availability.getOrDefault(roomType, 0);
-    }
+    public int getAvailability(String roomType) { return availability.getOrDefault(roomType, 0); }
+}
 
-    public void updateAvailability(String roomType, int newCount) {
-        availability.put(roomType, newCount);
-    }
+class RoomSearchService {
+    private RoomInventory inventory;
 
-    public void displayInventory() {
-        for (Map.Entry<String, Integer> entry : availability.entrySet()) {
-            System.out.println(entry.getKey() + " | Available: " + entry.getValue());
+    public RoomSearchService(RoomInventory inventory) { this.inventory = inventory; }
+
+    public void searchAvailableRooms(Room[] rooms) {
+        System.out.println("\nAvailable Rooms:");
+        for (Room room : rooms) {
+            int available = inventory.getAvailability(room.name);
+            if (available > 0) {
+                room.displayDetails();
+                System.out.println("Available: " + available + "\n");
+            }
         }
     }
 }
@@ -64,22 +65,19 @@ public class BookMyStayApp {
         Room single = new SingleRoom();
         Room doubleR = new DoubleRoom();
         Room suite = new SuiteRoom();
+        Room[] allRooms = {single, doubleR, suite};
 
         inventory.addRoomType(single.name, 5);
-        inventory.addRoomType(doubleR.name, 3);
+        inventory.addRoomType(doubleR.name, 0);
         inventory.addRoomType(suite.name, 2);
 
         System.out.println("======================================");
-        System.out.println("   Welcome to Book My Stay App v3.1");
-        System.out.println("======================================\n");
+        System.out.println("   Welcome to Book My Stay App v4.0");
+        System.out.println("======================================");
 
-        single.displayDetails();
-        doubleR.displayDetails();
-        suite.displayDetails();
+        RoomSearchService searchService = new RoomSearchService(inventory);
+        searchService.searchAvailableRooms(allRooms);
 
-        System.out.println("\nCurrent Room Inventory:");
-        inventory.displayInventory();
-
-        System.out.println("\nThank you for using Book My Stay!");
+        System.out.println("Thank you for using Book My Stay!");
     }
 }
