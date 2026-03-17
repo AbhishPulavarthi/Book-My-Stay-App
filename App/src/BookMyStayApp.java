@@ -36,7 +36,7 @@ public class BookMyStayApp {
 
         BookingRequestQueue requestQueue = new BookingRequestQueue();
 
-        requestQueue.addRequest(new Reservation("Alice", "Single Room"));
+        requestQueue.addRequest(new Reservation("Alic", "Single Room"));
         requestQueue.addRequest(new Reservation("Bob", "Double Room"));
         requestQueue.addRequest(new Reservation("Charlie", "Suite Room"));
         requestQueue.addRequest(new Reservation("Diana", "Single Room"));
